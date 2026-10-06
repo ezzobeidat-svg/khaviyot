@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fbf4ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1510" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="חוויות">
+<title>חוויות</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbf4ec; --card:#ffffff; --ink:#2b231c; --muted:#8a7a68; --line:#efe3d3;
+  --accent:#c4602e; --accent-ink:#ffffff; --accent-soft:#fae6d7;
+  --gold:#b8862f; --gold-soft:#f6ecd6;
+  --danger:#b8403a; --danger-soft:#fbe6e3;
+  --shadow:0 1px 2px rgba(60,30,10,.05),0 8px 20px rgba(60,30,10,.06);
+  --radius:18px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#1c1510; --card:#271e17; --ink:#f1e8dc; --muted:#a3917c; --line:#382c21;
+    --accent:#e08350; --accent-ink:#1c1510; --accent-soft:#3a2a1c;
+    --gold:#d9ab5c; --gold-soft:#3a2f1d;
+    --danger:#e2847b; --danger-soft:#3a211e;
+    --shadow:none;
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:'Heebo',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+button{font:inherit;color:inherit}
+svg{width:18px;height:18px;flex:none}
+[hidden]{display:none!important}
+
+.wrap{max-width:640px;margin:0 auto;padding:28px 16px 110px;padding-top:max(28px,env(safe-area-inset-top))}
+
+header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+.hello h1{font-size:27px;margin:0 0 2px;font-weight:800;letter-spacing:-.01em}
+.hello p{margin:0;color:var(--muted);font-size:14px}
+.head-actions{display:flex;gap:8px}
+.icon-btn{position:relative;width:42px;height:42px;border-radius:14px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;cursor:pointer;transition:transform .15s}
+.icon-btn:active{transform:scale(.94)}
+.sync{position:absolute;top:7px;left:7px;width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid var(--card);box-sizing:content-box}
+.sync.busy{background:var(--gold);animation:pulse 1s infinite}
+.sync.err{background:var(--danger)}
+@keyframes pulse{50%{opacity:.35}}
+.spin svg{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(-360deg)}}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow)}
+.stat b{display:block;font-size:24px;font-weight:800;line-height:1.2}
+.stat span{font-size:12.5px;color:var(--muted)}
+.stat.done b{color:var(--accent)}
+.stat.soon b{color:var(--gold)}
+
+.quick{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:6px;box-shadow:var(--shadow);margin-bottom:18px;transition:border-color .2s}
+.quick:focus-within{border-color:var(--accent)}
+.quick input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:16px;padding:10px 10px;color:var(--ink);outline:none}
+.quick input::placeholder{color:var(--muted)}
+.quick .icon-btn{border:0;background:transparent;width:40px;height:40px;color:var(--muted)}
+.btn{border:0;border-radius:13px;padding:10px 18px;font-weight:700;font-size:15px;cursor:pointer;transition:transform .15s,opacity .15s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;border:1px solid var(--line)}
+.btn.danger{background:var(--danger-soft);color:var(--danger)}
+
+.tabs{display:flex;gap:4px;background:var(--line);padding:4px;border-radius:14px;margin-bottom:18px}
+.tabs button{flex:1;border:0;background:transparent;padding:8px 6px;border-radius:11px;font-size:14.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:background .2s,color .2s}
+.tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tabs .count{font-size:12px;opacity:.7;margin-inline-start:4px}
+
+.catrow{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding-bottom:2px}
+.catrow::-webkit-scrollbar{display:none}
+.catchip{flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.catchip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+.group{margin-bottom:18px}
+.group h3{display:flex;align-items:center;gap:8px;margin:0 4px 8px;font-size:13px;font-weight:700;color:var(--muted)}
+.group h3 span{font-weight:600;background:var(--line);border-radius:999px;padding:0 8px;font-size:12px}
+
+.exp{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:9px;box-shadow:var(--shadow);animation:in .25s ease both}
+@keyframes in{from{opacity:0;transform:translateY(4px)}}
+.check{flex:none;width:26px;height:26px;margin-top:1px;border-radius:50%;border:2px solid #d8c6ad;background:transparent;cursor:pointer;display:grid;place-items:center;color:transparent;transition:all .2s}
+.check svg{width:14px;height:14px;stroke-width:3}
+.check:hover{border-color:var(--accent);color:var(--accent)}
+.exp.done .check{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.exp.done .title{text-decoration:line-through;color:var(--muted)}
+.exp.done{opacity:.75}
+.body{flex:1;min-width:0;cursor:pointer}
+.title{font-weight:600;font-size:16px;overflow-wrap:anywhere}
+.notes{color:var(--muted);font-size:14px;margin-top:2px;white-space:pre-wrap;overflow-wrap:anywhere}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;padding:2px 10px;border-radius:999px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.chip svg{width:13px;height:13px}
+.chip.cat{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.stars{display:inline-flex;gap:1px;color:var(--gold)}
+.stars svg{width:13px;height:13px}
+.actions{display:flex;gap:2px;opacity:.5;transition:opacity .2s}
+.exp:hover .actions{opacity:1}
+.actions button{width:34px;height:34px;border:0;background:transparent;color:var(--muted);border-radius:10px;cursor:pointer;display:grid;place-items:center}
+.actions button:hover{background:var(--bg);color:var(--ink)}
+
+.empty{text-align:center;padding:48px 16px;color:var(--muted)}
+.empty b{display:block;font-size:18px;color:var(--ink);margin-bottom:4px;font-weight:700}
+.link{display:block;margin:14px auto 0;background:none;border:0;cursor:pointer;font-size:14px;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.link.danger{color:var(--danger)}
+
+.overlay{position:fixed;inset:0;background:rgba(30,20,10,.4);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.overlay.open{display:flex;animation:fade .2s ease}
+@keyframes fade{from{opacity:0}}
+.sheet{background:var(--card);width:100%;max-width:520px;border-radius:24px 24px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto;animation:up .25s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(30px);opacity:.6}}
+@media (min-width:640px){.overlay{align-items:center}.sheet{border-radius:24px}}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.sheet-head h2{margin:0;font-size:19px;font-weight:800}
+.sheet-head .icon-btn{width:36px;height:36px;border:0;background:var(--bg)}
+label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:14px 0 6px}
+.field{width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1px solid var(--line);border-radius:13px;background:var(--bg);color:var(--ink);outline:none;transition:border-color .2s}
+.field:focus{border-color:var(--accent)}
+textarea.field{resize:vertical;min-height:70px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1;min-width:64px;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:9px 4px;font-size:13.5px;cursor:pointer;color:var(--muted);transition:all .15s}
+.seg button.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
+.starpick{display:flex;gap:6px;margin-top:4px}
+.starpick button{border:0;background:transparent;cursor:pointer;color:#d8c6ad;padding:4px}
+.starpick button svg{width:26px;height:26px}
+.starpick button.on{color:var(--gold)}
+.sheet-foot{display:flex;gap:10px;margin-top:22px}
+.sheet-foot .btn.primary{flex:1;padding:13px}
+.hint{font-size:13px;color:var(--muted);margin:6px 0 0}
+.intro{background:var(--accent-soft);color:var(--ink);border-radius:13px;padding:12px 14px;font-size:14px;margin:8px 0 4px}
+
+.toast{position:fixed;bottom:calc(22px + env(safe-area-inset-bottom));left:50%;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:14px;font-size:14.5px;display:flex;align-items:center;gap:14px;opacity:0;pointer-events:none;transition:all .25s;z-index:30;max-width:calc(100% - 32px);box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.toast button{background:none;border:0;color:var(--gold-soft);font-weight:700;cursor:pointer;padding:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="hello">
+      <h1>חוויות</h1>
+      <p id="subLabel">הדברים שאני רוצה לחוות</p>
+    </div>
+    <div class="head-actions">
+      <button class="icon-btn" id="refreshBtn" title="סנכרון" aria-label="סנכרון"><span class="sync" id="sync"></span><span id="refreshIcon"></span></button>
+      <button class="icon-btn" id="settingsBtn" title="הגדרות" aria-label="הגדרות"><span id="gearIcon"></span></button>
+    </div>
+  </header>
+
+  <section class="stats">
+    <div class="stat"><b id="sTotal">0</b><span>סה"כ</span></div>
+    <div class="stat soon"><b id="sTodo">0</b><span>ממתינות</span></div>
+    <div class="stat done"><b id="sDone">0</b><span>בוצעו</span></div>
+  </section>
+
+  <form class="quick" id="quickForm" autocomplete="off">
+    <input id="quickInput" placeholder="הוסיפו חוויה חדשה…" aria-label="חוויה חדשה" enterkeyhint="done">
+    <button type="button" class="icon-btn" id="detailsBtn" title="הוספת פרטים" aria-label="הוספת פרטים"></button>
+    <button class="btn primary" type="submit">הוספה</button>
+  </form>
+
+  <nav class="tabs" id="tabs">
+    <button data-f="all" class="on">הכל<span class="count" id="cAll"></span></button>
+    <button data-f="todo">לביצוע<span class="count" id="cTodo"></span></button>
+    <button data-f="done">בוצעו</button>
+  </nav>
+
+  <div class="catrow" id="catRow"></div>
+
+  <main id="list"></main>
+</div>
+
+<!-- Experience sheet -->
+<div class="overlay" id="expSheet">
+  <form class="sheet" id="expForm" autocomplete="off">
+    <div class="sheet-head">
+      <h2 id="sheetTitle">חוויה חדשה</h2>
+      <button type="button" class="icon-btn" data-close aria-label="סגירה"></button>
+    </div>
+    <label for="fTitle">מה תרצו לחוות?</label>
+    <input class="field" id="fTitle" required placeholder="למשל: צניחה חופשית">
+    <label for="fNotes">פרטים נוספים</label>
+    <textarea class="field" id="fNotes" placeholder="איפה, עם מי, למה זה חשוב לי… (לא חובה)"></textarea>
+    <label>קטגוריה</label>
+    <div class="seg" id="fCategory">
+      <button type="button" data-v="travel">✈️ טיול</button>
+      <button type="button" data-v="food">🍽️ אוכל</button>
+      <button type="button" data-v="adventure">🏔️ הרפתקה</button>
+      <button type="button" data-v="skill">🎯 כישרון</button>
+      <button type="button" data-v="other">✨ אחר</button>
+    </div>
+    <label>כמה זה חשוב לי</label>
+    <div class="starpick" id="fStars">
+      <button type="button" data-v="1">★</button>
+      <button type="button" data-v="2">★</button>
+      <button type="button" data-v="3">★</button>
+      <button type="button" data-v="4">★</button>
+      <button type="button" data-v="5">★</button>
+    </div>
+    <div class="sheet-foot">
+      <button type="button" class="btn danger" id="fDelete">מחיקה</button>
+      <button type="submit" class="btn primary">שמירה</button>
+    </div>
+  </form>
+</div>
+
+<!-- Settings sheet -->
+<div class="overlay" id="settingsSheet">
+  <form class="sheet" id="settingsForm" autocomplete="off">
+    <div class="sheet-head">
+      <h2>הגדרות</h2>
+      <button type="button" class="icon-btn" data-close aria-label="סגירה"></button>
+    </div>
+    <div class="intro" id="intro" hidden>ברוכים הבאים! הכתובת כבר מוגדרת — הקלידו רק את הקוד הסודי (TOKEN) שהגדרתם ב-Code.gs ולחצו שמירה.</div>
+    <label for="sUrl">כתובת Apps Script (מסתיימת ב-‎/exec)</label>
+    <input class="field" id="sUrl" dir="ltr" placeholder="https://script.google.com/macros/s/…/exec">
+    <label for="sToken">קוד סודי</label>
+    <input class="field" id="sToken" dir="ltr" type="password" placeholder="אותו TOKEN שב-Code.gs">
+    <p class="hint" id="sStatus"></p>
+    <div class="sheet-foot">
+      <button type="button" class="btn ghost" id="testBtn">בדיקת חיבור</button>
+      <button type="submit" class="btn primary">שמירה</button>
+    </div>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ---------- Icons ---------- */
+const svg = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const ICON = {
+  check: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+  star: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8L6 21l1.6-7L2.2 9.2l7.1-.6z"/></svg>',
+  edit: svg('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>'),
+  trash: svg('<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/>'),
+  plus: svg('<path d="M12 5v14M5 12h14"/>'),
+  refresh: svg('<path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/>'),
+  gear: svg('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'),
+  close: svg('<path d="M6 6l12 12M18 6L6 18"/>')
+};
+const CAT = {
+  travel:{label:'טיול', emoji:'✈️'}, food:{label:'אוכל', emoji:'🍽️'}, adventure:{label:'הרפתקה', emoji:'🏔️'},
+  skill:{label:'כישרון', emoji:'🎯'}, other:{label:'אחר', emoji:'✨'}
+};
+
+/* ---------- State & storage ---------- */
+const K = { url:'hav.url', token:'hav.token', cache:'hav.cache', queue:'hav.queue' };
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+let items = store.get(K.cache, []);
+let queue = store.get(K.queue, []);
+let filter = 'all', catFilter = 'all', editingId = null, flushing = false;
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 9));
+const nowISO = () => new Date().toISOString();
+const DEFAULT_URL = '';
+const cfg = () => ({ url: store.get(K.url, '') || DEFAULT_URL, token: store.get(K.token, '') });
+
+/* ---------- Render ---------- */
+function starsHTML(n){
+  n = +n || 0;
+  let h = '<span class="stars">';
+  for(let i=1;i<=5;i++) h += `<span style="opacity:${i<=n?1:.25}">${ICON.star}</span>`;
+  return h + '</span>';
+}
+function expHTML(t){
+  const cat = CAT[t.category];
+  const meta = `<div class="meta">
+      ${cat ? `<span class="chip cat">${cat.emoji} ${cat.label}</span>` : ''}
+      ${t.rating>0 ? `<span class="chip">${starsHTML(t.rating)}</span>` : ''}
+    </div>`;
+  return `<div class="exp${t.done ? ' done' : ''}" data-id="${esc(t.id)}">
+    <button class="check" data-act="toggle" aria-label="${t.done ? 'בטל סימון' : 'סמן כבוצע'}">${ICON.check}</button>
+    <div class="body" data-act="edit">
+      <div class="title">${esc(t.title)}</div>
+      ${t.notes ? `<div class="notes">${esc(t.notes)}</div>` : ''}
+      ${meta}
+    </div>
+    <div class="actions">
+      <button data-act="edit" aria-label="עריכה">${ICON.edit}</button>
+      <button data-act="delete" aria-label="מחיקה">${ICON.trash}</button>
+    </div>
+  </div>`;
+}
+const empty = (a, b) => `<div class="empty"><b>${a}</b>${b}</div>`;
+
+function renderCats(){
+  const row = $('#catRow');
+  const cats = ['all', ...Object.keys(CAT)];
+  row.innerHTML = cats.map(c => {
+    const label = c === 'all' ? 'הכל' : `${CAT[c].emoji} ${CAT[c].label}`;
+    return `<button class="catchip${catFilter===c?' on':''}" data-c="${c}">${label}</button>`;
+  }).join('');
+}
+
+function render(){
+  const todo = items.filter(t => !t.done);
+  $('#sTotal').textContent = items.length;
+  $('#sTodo').textContent = todo.length;
+  $('#sDone').textContent = items.filter(t => t.done).length;
+  $('#cAll').textContent = items.length || '';
+  $('#cTodo').textContent = todo.length || '';
+
+  let base = items;
+  if (filter === 'todo') base = items.filter(t => !t.done);
+  else if (filter === 'done') base = items.filter(t => t.done);
+  if (catFilter !== 'all') base = base.filter(t => t.category === catFilter);
+  base = base.slice().sort((a,b) => (b.rating||0)-(a.rating||0) || String(b.createdAt).localeCompare(String(a.createdAt)));
+
+  let html = '';
+  if (!base.length){
+    html = filter === 'done' ? empty('עוד לא סימנתם כלום', 'חוויות שתסמנו כבוצעו יופיעו כאן')
+                              : empty('הרשימה ריקה', 'הוסיפו את החוויה הראשונה שלכם מלמעלה');
+  } else {
+    html = base.map(expHTML).join('');
+    if (filter === 'done' && base.length) html += '<button class="link danger" data-act="clearDone">מחיקת כל הבוצעו</button>';
+  }
+  $('#list').innerHTML = html;
+}
+
+function commit(){ store.set(K.cache, items); render(); }
+
+/* ---------- Sync with Google Sheets ---------- */
+function setSync(state){
+  $('#sync').className = 'sync' + (state === 'busy' ? ' busy' : state === 'err' ? ' err' : '');
+  $('#refreshBtn').classList.toggle('spin', state === 'busy');
+}
+function errMsg(e){
+  const m = String(e && e.message || e);
+  if (m === 'unauthorized') return 'הקוד הסודי שגוי';
+  if (m === 'no-url') return 'הוסיפו כתובת Apps Script בהגדרות';
+  return 'לא ניתן להתחבר — ננסה שוב אוטומטית';
+}
+async function apiGet(c = cfg()){
+  if (!c.url) throw new Error('no-url');
+  const r = await fetch(c.url + '?action=list&token=' + encodeURIComponent(c.token) + '&t=' + Date.now());
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error);
+  return d.items;
+}
+async function apiPost(op){
+  const { url, token } = cfg();
+  if (!url) throw new Error('no-url');
+  const r = await fetch(url, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify({ ...op, token }) });
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error);
+  return d;
+}
+function enqueue(op){ queue.push(op); store.set(K.queue, queue); flush(); }
+
+async function flush(){
+  if (flushing || !queue.length) return;
+  if (!cfg().url){ setSync('err'); return; }
+  flushing = true; setSync('busy');
+  try{
+    while (queue.length){
+      try{ await apiPost(queue[0]); }
+      catch(e){ if (e.message !== 'not-found') throw e; }
+      queue.shift(); store.set(K.queue, queue);
+    }
+    setSync('ok');
+  }catch(e){
+    setSync('err');
+    if (e.message === 'unauthorized') toast(errMsg(e));
+  }finally{ flushing = false; }
+}
+
+const norm = t => ({ ...t, rating: +t.rating || 0, done: t.done === true || String(t.done).toUpperCase() === 'TRUE' });
+
+async function load(){
+  if (!cfg().url){ setSync('err'); return; }
+  await flush();
+  if (queue.length) return;
+  setSync('busy');
+  try{
+    const remote = (await apiGet()).map(norm);
+    if (!queue.length){
+      const remoteIds = new Set(remote.map(t => t.id));
+      const localOnly = items.filter(t => !remoteIds.has(t.id));
+      items = [...remote, ...localOnly];
+      localOnly.forEach(t => enqueue({ action:'add', item: t }));
+      commit();
+    }
+    setSync('ok');
+  }catch(e){ setSync('err'); toast(errMsg(e)); }
+}
+
+/* ---------- Actions ---------- */
+function toggleItem(id){
+  const t = items.find(x => x.id === id); if (!t) return;
+  t.done = !t.done;
+  t.completedAt = t.done ? nowISO() : '';
+  t.updatedAt = nowISO();
+  commit();
+  enqueue({ action:'update', item: { id, done: t.done, completedAt: t.completedAt, updatedAt: t.updatedAt } });
+  if (t.done) toast('כל הכבוד! בוצע ✓');
+}
+
+function deleteItem(id){
+  const i = items.findIndex(t => t.id === id); if (i < 0) return;
+  const [t] = items.splice(i, 1);
+  commit();
+  let undone = false;
+  const timer = setTimeout(() => { if (!undone) enqueue({ action:'delete', id }); }, 4500);
+  toast('החוויה נמחקה', { label:'ביטול', fn(){ undone = true; clearTimeout(timer); items.splice(i, 0, t); commit(); } });
+}
+
+function clearDone(){
+  const done = items.filter(t => t.done);
+  if (!done.length || !confirm(`למחוק ${done.length} חוויות שבוצעו?`)) return;
+  items = items.filter(t => !t.done); commit();
+  done.forEach(t => enqueue({ action:'delete', id: t.id }));
+  toast('נמחק');
+}
+
+function addQuick(title){
+  const t = { id: uid(), title, notes:'', category:'other', rating:0, done:false,
+              createdAt: nowISO(), updatedAt: nowISO(), completedAt:'' };
+  items.push(t); commit();
+  enqueue({ action:'add', item: t });
+  toast('החוויה נוספה');
+}
+
+/* ---------- Sheets UI ---------- */
+function openSheet(sel){ $(sel).classList.add('open'); }
+function closeSheets(){ document.querySelectorAll('.overlay.open').forEach(o => o.classList.remove('open')); editingId = null; }
+function setSeg(sel, v){ document.querySelectorAll(sel + ' button').forEach(b => b.classList.toggle('on', b.dataset.v === v)); }
+const getSeg = sel => (document.querySelector(sel + ' button.on') || {}).dataset?.v;
+function setStars(n){
+  document.querySelectorAll('#fStars button').forEach(b => b.classList.toggle('on', +b.dataset.v <= n));
+  $('#fStars').dataset.val = n;
+}
+
+function openExp(id, prefill = ''){
+  editingId = id || null;
+  const t = id ? items.find(x => x.id === id) : null;
+  $('#sheetTitle').textContent = t ? 'עריכת חוויה' : 'חוויה חדשה';
+  $('#fTitle').value = t ? t.title : prefill;
+  $('#fNotes').value = t ? (t.notes || '') : '';
+  setSeg('#fCategory', t ? (t.category || 'other') : 'other');
+  setStars(t ? (t.rating || 0) : 0);
+  $('#fDelete').hidden = !t;
+  openSheet('#expSheet');
+  setTimeout(() => $('#fTitle').focus(), 60);
+}
+
+function openSettings(first = false){
+  const c = cfg();
+  $('#sUrl').value = c.url; $('#sToken').value = c.token;
+  $('#intro').hidden = !first; $('#sStatus').textContent = '';
+  openSheet('#settingsSheet');
+}
+
+/* ---------- Toast ---------- */
+let toastTimer;
+function toast(msg, action){
+  const el = $('#toast');
+  el.innerHTML = `<span>${esc(msg)}</span>${action ? `<button type="button">${esc(action.label)}</button>` : ''}`;
+  if (action) el.querySelector('button').onclick = () => { action.fn(); el.classList.remove('show'); };
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), action ? 4500 : 2400);
+}
+
+/* ---------- Events ---------- */
+$('#refreshIcon').outerHTML = ICON.refresh;
+$('#gearIcon').outerHTML = ICON.gear;
+$('#detailsBtn').innerHTML = ICON.plus;
+document.querySelectorAll('[data-close]').forEach(b => { b.innerHTML = ICON.close; b.onclick = closeSheets; });
+document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) closeSheets(); }));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheets(); });
+
+$('#quickForm').onsubmit = e => {
+  e.preventDefault();
+  const v = $('#quickInput').value.trim(); if (!v) return;
+  addQuick(v); $('#quickInput').value = '';
+};
+$('#detailsBtn').onclick = () => { openExp(null, $('#quickInput').value.trim()); $('#quickInput').value = ''; };
+
+$('#tabs').onclick = e => {
+  const b = e.target.closest('button[data-f]'); if (!b) return;
+  filter = b.dataset.f;
+  document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x === b));
+  render();
+};
+
+$('#catRow').onclick = e => {
+  const b = e.target.closest('.catchip'); if (!b) return;
+  catFilter = b.dataset.c;
+  renderCats(); render();
+};
+
+$('#list').onclick = e => {
+  const a = e.target.closest('[data-act]'); if (!a) return;
+  if (a.dataset.act === 'clearDone') return clearDone();
+  const id = a.closest('.exp')?.dataset.id; if (!id) return;
+  if (a.dataset.act === 'toggle') toggleItem(id);
+  else if (a.dataset.act === 'edit') openExp(id);
+  else if (a.dataset.act === 'delete') deleteItem(id);
+};
+
+document.querySelectorAll('.seg').forEach(s => s.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (b) setSeg('#' + s.id, b.dataset.v);
+}));
+$('#fStars').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  setStars(+b.dataset.v);
+};
+
+$('#expForm').onsubmit = e => {
+  e.preventDefault();
+  const title = $('#fTitle').value.trim(); if (!title) return;
+  const data = { title, notes: $('#fNotes').value.trim(), category: getSeg('#fCategory') || 'other', rating: +($('#fStars').dataset.val || 0) };
+  if (editingId){
+    const t = items.find(x => x.id === editingId);
+    if (t){
+      Object.assign(t, data, { updatedAt: nowISO() });
+      enqueue({ action:'update', item: { id: t.id, ...data, updatedAt: t.updatedAt } });
+      toast('נשמר');
+    }
+  } else {
+    const t = { id: uid(), ...data, done:false, createdAt: nowISO(), updatedAt: nowISO(), completedAt:'' };
+    items.push(t);
+    enqueue({ action:'add', item: t });
+    toast('החוויה נוספה');
+  }
+  closeSheets(); commit();
+};
+$('#fDelete').onclick = () => { const id = editingId; closeSheets(); deleteItem(id); };
+
+$('#settingsBtn').onclick = () => openSettings(false);
+$('#refreshBtn').onclick = () => load();
+$('#testBtn').onclick = async () => {
+  const st = $('#sStatus'); st.textContent = 'בודק…';
+  try{
+    const list = await apiGet({ url: $('#sUrl').value.trim(), token: $('#sToken').value.trim() });
+    st.textContent = `✓ החיבור עובד — ${list.length} חוויות בגיליון`;
+  }catch(e){ st.textContent = '✗ ' + errMsg(e); }
+};
+$('#settingsForm').onsubmit = e => {
+  e.preventDefault();
+  store.set(K.url, $('#sUrl').value.trim());
+  store.set(K.token, $('#sToken').value.trim());
+  closeSheets(); toast('ההגדרות נשמרו'); load();
+};
+
+document.addEventListener('visibilitychange', () => { if (!document.hidden) load(); });
+window.addEventListener('online', flush);
+setInterval(flush, 20000);
+
+/* ---------- Start ---------- */
+renderCats(); render();
+if (!cfg().url){ setSync('err'); openSettings(true); } else load();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+  });
+}
+</script>
+</body>
+</html>
