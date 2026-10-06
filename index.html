@@ -272,7 +272,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 9));
 const nowISO = () => new Date().toISOString();
-const DEFAULT_URL = '';
+const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbxxVJjsJG6WfT09360KKWSZI64CdLGM6Fsl5dD9mz0ZWsfPKxmIVZcnFq4YLGCcPYB2/exec';
 const cfg = () => ({ url: store.get(K.url, '') || DEFAULT_URL, token: store.get(K.token, '') });
 
 /* ---------- Render ---------- */
