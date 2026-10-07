@@ -225,11 +225,8 @@ textarea.field{resize:vertical;min-height:70px}
       <h2>הגדרות</h2>
       <button type="button" class="icon-btn" data-close aria-label="סגירה"></button>
     </div>
-    <div class="intro" id="intro" hidden>ברוכים הבאים! הכתובת כבר מוגדרת — הקלידו רק את הקוד הסודי (TOKEN) שהגדרתם ב-Code.gs ולחצו שמירה.</div>
     <label for="sUrl">כתובת Apps Script (מסתיימת ב-‎/exec)</label>
     <input class="field" id="sUrl" dir="ltr" placeholder="https://script.google.com/macros/s/…/exec">
-    <label for="sToken">קוד סודי</label>
-    <input class="field" id="sToken" dir="ltr" type="password" placeholder="אותו TOKEN שב-Code.gs">
     <p class="hint" id="sStatus"></p>
     <div class="sheet-foot">
       <button type="button" class="btn ghost" id="testBtn">בדיקת חיבור</button>
@@ -259,7 +256,7 @@ const CAT = {
 };
 
 /* ---------- State & storage ---------- */
-const K = { url:'hav.url', token:'hav.token', cache:'hav.cache', queue:'hav.queue' };
+const K = { url:'hav.url', cache:'hav.cache', queue:'hav.queue' };
 const store = {
   get(k, d){ try{ const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
@@ -273,7 +270,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 9));
 const nowISO = () => new Date().toISOString();
 const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbxxVJjsJG6WfT09360KKWSZI64CdLGM6Fsl5dD9mz0ZWsfPKxmIVZcnFq4YLGCcPYB2/exec';
-const cfg = () => ({ url: store.get(K.url, '') || DEFAULT_URL, token: store.get(K.token, '') });
+const cfg = () => ({ url: store.get(K.url, '') || DEFAULT_URL });
 
 /* ---------- Render ---------- */
 function starsHTML(n){
@@ -346,21 +343,20 @@ function setSync(state){
 }
 function errMsg(e){
   const m = String(e && e.message || e);
-  if (m === 'unauthorized') return 'הקוד הסודי שגוי';
   if (m === 'no-url') return 'הוסיפו כתובת Apps Script בהגדרות';
   return 'לא ניתן להתחבר — ננסה שוב אוטומטית';
 }
 async function apiGet(c = cfg()){
   if (!c.url) throw new Error('no-url');
-  const r = await fetch(c.url + '?action=list&token=' + encodeURIComponent(c.token) + '&t=' + Date.now());
+  const r = await fetch(c.url + '?action=list&t=' + Date.now());
   const d = await r.json();
   if (!d.ok) throw new Error(d.error);
   return d.items;
 }
 async function apiPost(op){
-  const { url, token } = cfg();
+  const { url } = cfg();
   if (!url) throw new Error('no-url');
-  const r = await fetch(url, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify({ ...op, token }) });
+  const r = await fetch(url, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(op) });
   const d = await r.json();
   if (!d.ok) throw new Error(d.error);
   return d;
@@ -380,7 +376,6 @@ async function flush(){
     setSync('ok');
   }catch(e){
     setSync('err');
-    if (e.message === 'unauthorized') toast(errMsg(e));
   }finally{ flushing = false; }
 }
 
@@ -465,8 +460,8 @@ function openExp(id, prefill = ''){
 
 function openSettings(first = false){
   const c = cfg();
-  $('#sUrl').value = c.url; $('#sToken').value = c.token;
-  $('#intro').hidden = !first; $('#sStatus').textContent = '';
+  $('#sUrl').value = c.url;
+  $('#sStatus').textContent = '';
   openSheet('#settingsSheet');
 }
 
@@ -552,14 +547,13 @@ $('#refreshBtn').onclick = () => load();
 $('#testBtn').onclick = async () => {
   const st = $('#sStatus'); st.textContent = 'בודק…';
   try{
-    const list = await apiGet({ url: $('#sUrl').value.trim(), token: $('#sToken').value.trim() });
+    const list = await apiGet({ url: $('#sUrl').value.trim() });
     st.textContent = `✓ החיבור עובד — ${list.length} חוויות בגיליון`;
   }catch(e){ st.textContent = '✗ ' + errMsg(e); }
 };
 $('#settingsForm').onsubmit = e => {
   e.preventDefault();
   store.set(K.url, $('#sUrl').value.trim());
-  store.set(K.token, $('#sToken').value.trim());
   closeSheets(); toast('ההגדרות נשמרו'); load();
 };
 

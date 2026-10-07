@@ -1,5 +1,5 @@
 // שירות פשוט לשמירת הדף הבסיסי במטמון, כדי שהאפליקציה לא תימחק אוטומטית ממסך הבית
-const CACHE_NAME = 'havayot-v1';
+const CACHE_NAME = 'havayot-v2';
 const CORE_ASSETS = [
   './',
   './index.html',
